@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Game Feel Database</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d0d0f;
+      --surface:   #141417;
+      --border:    #222228;
+      --accent:    #c8f04a;
+      --accent-dim:#8aaa2e;
+      --text:      #e8e8ec;
+      --muted:     #7a7a88;
+      --axis-f:    #4af0c8;
+      --axis-s:    #4ab4f0;
+      --axis-d:    #f04a6a;
+      --axis-i:    #c84af0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(13,13,15,0.85);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-logo {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .nav-status {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8rem 2rem 4rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+
+    .hero-headline {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      margin-bottom: 2rem;
+      color: var(--text);
+    }
+
+    .hero-headline em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .hero-body {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.75;
+      margin-bottom: 3rem;
+    }
+
+    .hero-body strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .cta-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .cta-primary {
+      display: inline-block;
+      background: var(--accent);
+      color: #0d0d0f;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.85rem 1.75rem;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .cta-primary:hover { background: var(--accent-dim); }
+
+    .cta-secondary {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* AXIS STRIP */
+    .axis-strip {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 2rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .axis-track {
+      display: flex;
+      gap: 1.5rem;
+      animation: scroll-left 30s linear infinite;
+      width: max-content;
+    }
+
+    .axis-strip:hover .axis-track { animation-play-state: paused; }
+
+    @keyframes scroll-left {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .axis-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.75rem;
+      border: 1px solid;
+      white-space: nowrap;
+      opacity: 0.7;
+    }
+
+    .axis-tag.f { color: var(--axis-f); border-color: var(--axis-f); }
+    .axis-tag.s { color: var(--axis-s); border-color: var(--axis-s); }
+    .axis-tag.d { color: var(--axis-d); border-color: var(--axis-d); }
+    .axis-tag.i { color: var(--axis-i); border-color: var(--axis-i); }
+
+    /* HOW IT WORKS */
+    .section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 6rem 2rem;
+    }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 2px;
+    }
+
+    .step {
+      background: var(--surface);
+      padding: 2rem;
+      border: 1px solid var(--border);
+    }
+
+    .step-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    .step-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+    }
+
+    .step-body {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* PROFILE DEMO */
+    .demo {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      margin-top: 4rem;
+    }
+
+    .demo-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .demo-game {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+
+    .axes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .axis-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .axis-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .axis-label span { color: var(--text); }
+
+    .axis-bar-track {
+      height: 3px;
+      background: var(--border);
+      position: relative;
+    }
+
+    .axis-bar-fill {
+      height: 100%;
+      position: absolute;
+      top: 0;
+      transition: width 0.6s ease;
+    }
+
+    /* PILLARS */
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+      margin-top: 4rem;
+    }
+
+    .pillar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2rem;
+    }
+
+    .pillar-name {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .pillar-name.f { color: var(--axis-f); }
+    .pillar-name.s { color: var(--axis-s); }
+    .pillar-name.d { color: var(--axis-d); }
+    .pillar-name.i { color: var(--axis-i); }
+
+    .pillar-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* NOTIFY */
+    .notify-section {
+      border-top: 1px solid var(--border);
+      padding: 6rem 2rem;
+      text-align: center;
+    }
+
+    .notify-inner {
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .notify-headline {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+    }
+
+    .notify-sub {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+
+    .notify-form {
+      display: flex;
+      gap: 0;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    .notify-input {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-right: none;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      padding: 0.85rem 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .notify-input:focus { border-color: var(--accent); }
+    .notify-input::placeholder { color: var(--muted); }
+
+    .notify-btn {
+      background: var(--accent);
+      color: #0d0d0f;
+      border: none;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.85rem 1.25rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .notify-btn:hover { background: var(--accent-dim); }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-logo {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .footer-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+      .pillars { grid-template-columns: 1fr; }
+      .notify-form { flex-direction: column; }
+      .notify-input { border-right: 1px solid var(--border); border-bottom: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .axis-track { animation: none; }
+      .status-dot { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <span class="nav-logo">GFD</span>
+    <span class="nav-status">
+      <span class="status-dot"></span>
+      In development
+    </span>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <p class="hero-eyebrow">Game Feel Database</p>
+    <h1 class="hero-headline">Games rated on<br /><em>how they feel,</em><br />not what they are.</h1>
+    <p class="hero-body">
+      Steam thinks Elden Ring and The Sims are similar games. They share a tag, so the algorithm agrees.<br /><br />
+      GFD scores every game across <strong>25 axes</strong> (movement weight, cognitive load, penalty severity, narrative density) and uses those scores to surface recommendations that actually make sense.
+    </p>
+    <div class="cta-group">
+      <span class="cta-secondary">Database launching soon</span>
+    </div>
+  </section>
+
+  <!-- AXIS STRIP -->
+  <div class="axis-strip" aria-hidden="true">
+    <div class="axis-track">
+      <span class="axis-tag f">Movement Weight</span>
+      <span class="axis-tag f">Traversal Richness</span>
+      <span class="axis-tag f">Combat Pace</span>
+      <span class="axis-tag f">Cognitive Load</span>
+      <span class="axis-tag f">Tonal Register</span>
+      <span class="axis-tag f">Moment-to-Moment Levity</span>
+      <span class="axis-tag s">Narrative Density</span>
+      <span class="axis-tag s">Player Agency</span>
+      <span class="axis-tag s">Progression Meaningfulness</span>
+      <span class="axis-tag s">Crafting Depth</span>
+      <span class="axis-tag s">World Reactivity</span>
+      <span class="axis-tag s">Life Skills Depth</span>
+      <span class="axis-tag s">Mechanical Expression</span>
+      <span class="axis-tag d">Combat Difficulty</span>
+      <span class="axis-tag d">Puzzle Difficulty</span>
+      <span class="axis-tag d">Scarcity Pressure</span>
+      <span class="axis-tag d">Knowledge Gap</span>
+      <span class="axis-tag d">Penalty Severity</span>
+      <span class="axis-tag i">Character Customisation</span>
+      <span class="axis-tag i">Visual Character Design</span>
+      <span class="axis-tag i">Exploration Reward</span>
+      <span class="axis-tag i">FOMO Mechanics</span>
+      <!-- duplicate for seamless loop -->
+      <span class="axis-tag f">Movement Weight</span>
+      <span class="axis-tag f">Traversal Richness</span>
+      <span class="axis-tag f">Combat Pace</span>
+      <span class="axis-tag f">Cognitive Load</span>
+      <span class="axis-tag f">Tonal Register</span>
+      <span class="axis-tag f">Moment-to-Moment Levity</span>
+      <span class="axis-tag s">Narrative Density</span>
+      <span class="axis-tag s">Player Agency</span>
+      <span class="axis-tag s">Progression Meaningfulness</span>
+      <span class="axis-tag s">Crafting Depth</span>
+      <span class="axis-tag s">World Reactivity</span>
+      <span class="axis-tag s">Life Skills Depth</span>
+      <span class="axis-tag s">Mechanical Expression</span>
+      <span class="axis-tag d">Combat Difficulty</span>
+      <span class="axis-tag d">Puzzle Difficulty</span>
+      <span class="axis-tag d">Scarcity Pressure</span>
+      <span class="axis-tag d">Knowledge Gap</span>
+      <span class="axis-tag d">Penalty Severity</span>
+      <span class="axis-tag i">Character Customisation</span>
+      <span class="axis-tag i">Visual Character Design</span>
+      <span class="axis-tag i">Exploration Reward</span>
+      <span class="axis-tag i">FOMO Mechanics</span>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section class="section">
+    <p class="section-label">How it works</p>
+    <div class="steps">
+      <div class="step">
+        <p class="step-num">01</p>
+        <h3 class="step-title">Every game gets a profile</h3>
+        <p class="step-body">Each game is scored across 25 axes by trained scorers. Not vibes. Specific mechanics. How heavy does movement feel? How punishing is failure? Does the story branch?</p>
+      </div>
+      <div class="step">
+        <p class="step-num">02</p>
+        <h3 class="step-title">You set what matters</h3>
+        <p class="step-body">Toggle the axes you care about. Crank up Penalty Severity. Ignore everything else. The system finds games that match what you actually want, regardless of genre.</p>
+      </div>
+      <div class="step">
+        <p class="step-num">03</p>
+        <h3 class="step-title">Recommendations explain themselves</h3>
+        <p class="step-body">Every result tells you why it matched. Not "because you played X" but "similar weighty movement, similar slow narrative pace." Useful signal, not a black box.</p>
+      </div>
+    </div>
+
+    <!-- PILLAR EXPLAINER -->
+    <div style="margin-top: 5rem;">
+      <p class="section-label">The four pillars</p>
+      <div class="pillars">
+        <div class="pillar">
+          <p class="pillar-name f">Feel</p>
+          <p class="pillar-desc">How the game exists in your body and brain moment to moment: movement, pace, cognitive load, tone.</p>
+        </div>
+        <div class="pillar">
+          <p class="pillar-name s">Systems</p>
+          <p class="pillar-desc">How the game is architected underneath: narrative density, progression, crafting, world reactivity.</p>
+        </div>
+        <div class="pillar">
+          <p class="pillar-name d">Difficulty</p>
+          <p class="pillar-desc">A cross-cutting concern scored independently: combat, puzzles, resource scarcity, knowledge gaps, penalty severity.</p>
+        </div>
+        <div class="pillar">
+          <p class="pillar-name i">Identity</p>
+          <p class="pillar-desc">How much the game lets you make it yours: customisation, exploration reward, and whether it respects your time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOTIFY -->
+  <div class="notify-section">
+    <div class="notify-inner">
+      <h2 class="notify-headline">The database is coming.</h2>
+      <p class="notify-sub">Leave your email and we'll let you know when it's live.</p>
+      <div class="notify-form">
+        <input class="notify-input" type="email" placeholder="your@email.com" />
+        <button class="notify-btn">Notify me</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span class="footer-logo">Game Feel Database</span>
+    <span class="footer-note">gamefeeldatabase.com</span>
+  </footer>
+
+</body>
+</html>
